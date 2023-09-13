@@ -10,4 +10,14 @@
     <orderEntry type="jdk" jdkName="Python 3.11 (flask-blitek)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
+  <component name="TemplatesService">
+    <option name="TEMPLATE_CONFIGURATION" value="Jinja2" />
+    <option name="TEMPLATE_FOLDERS">
+      <list>
+        <option value="$MODULE_DIR$/02-BootStrap/templates" />
+        <option value="$MODULE_DIR$/01-BasicApp/templates" />
+        <option value="$MODULE_DIR$/venv/lib/python3.11/site-packages/flask_bs4/templates" />
+      </list>
+    </option>
+  </component>
 </module>
