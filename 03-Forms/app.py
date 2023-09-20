@@ -38,14 +38,21 @@ def log_in():
         username = login.userLogin.data
         userpass = login.userPass.data
         if username == users['username'] and userpass == users['userpass']:
-            session[userpass] = userpass
+            session['username'] = username
             return redirect('/dashboard')
     return render_template('login.html', title='Login', login=login)
 
 
+@app.route('/logout')
+def log_out():
+    session.pop('username')
+    return redirect('/login')
+
+
 @app.route('/dashboard')
 def dashboard():
-    return render_template('dashboard.html', title='Dashboard', userLogin=session.get('username'))
+    return render_template('dashboard.html', title='Dashboard', username=session.get('username'))
+
 
 if __name__ == "__main__":
     app.run(debug=True)
