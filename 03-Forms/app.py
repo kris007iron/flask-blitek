@@ -33,7 +33,8 @@ def index():
 
 @app.route('/login', methods=['POST', 'GET'])
 def log_in():
-    return render_template('login.html', title='Login')
+    login = LoginForm()
+    return render_template('login.html', title='Login', login=login)
 
 
 if __name__ == "__main__":
