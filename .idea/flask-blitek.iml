@@ -19,6 +19,7 @@
         <option value="$MODULE_DIR$/01-BasicApp/templates" />
         <option value="$MODULE_DIR$/venv/lib/python3.11/site-packages/flask_bs4/templates" />
         <option value="$MODULE_DIR$/03-Forms/templates" />
+        <option value="$MODULE_DIR$/04-Grades/templates" />
       </list>
     </option>
   </component>
