@@ -1,3 +1,5 @@
+import json
+
 from flask import Flask, render_template, redirect, session
 from flask_bs4 import Bootstrap
 from flask_wtf import FlaskForm
@@ -7,14 +9,6 @@ from wtforms.validators import DataRequired
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
 app.config['SECRET_KEY'] = 'downfield#)HRO){fe09fu3fhf){J(@{)o[ds9jhd;dw'  # example
-
-
-users = {
-    'username': 'admin',
-    'userpass': 'admin',
-    'firstname': 'Admin',
-    'lastname': 'Admin'
-}
 
 
 class LoginForm(FlaskForm):
@@ -35,11 +29,14 @@ def index():
 @app.route('/login', methods=['POST', 'GET'])
 def log_in():
     login = LoginForm()
+    with open("data/users.json") as users_file:
+        users = json.load(users_file)
+        users_file.close()
     if login.validate_on_submit():
         username = login.userLogin.data
         userpass = login.userPass.data
         if username == users['username'] and userpass == users['userpass']:
-            session['username'] = username
+            session['firstname'] = users['firstname']
             return redirect('/dashboard')
     return render_template('login.html', title='Login', login=login)
 
@@ -64,7 +61,7 @@ def internal_server_error(e):
 
 @app.route('/dashboard')
 def dashboard():
-    return render_template('dashboard.html', title='Dashboard', username=session.get('username'))
+    return render_template('dashboard.html', title='Dashboard', firstname=session.get('firstname'))
 
 
 if __name__ == "__main__":
