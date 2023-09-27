@@ -37,6 +37,7 @@ def log_in():
         userpass = login.userPass.data
         if username == users['username'] and userpass == users['userpass']:
             session['firstname'] = users['firstname']
+            session['username'] = username
             return redirect('/dashboard')
     return render_template('login.html', title='Login', login=login)
 
@@ -50,6 +51,7 @@ def page_not_found(e):
 @app.route('/logout')
 def log_out():
     session.pop('username')
+    session.pop('firstname')
     return redirect('/login')
 
 
@@ -61,7 +63,7 @@ def internal_server_error(e):
 
 @app.route('/dashboard')
 def dashboard():
-    return render_template('dashboard.html', title='Dashboard', firstname=session.get('firstname'))
+    return render_template('dashboard.html', title='Dashboard', username=session.get('username'),firstname=session.get('firstname'))
 
 
 if __name__ == "__main__":

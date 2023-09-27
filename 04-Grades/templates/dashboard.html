@@ -5,11 +5,14 @@
 {% endblock %}
 {% block title %}{{ title }}{% endblock %}
 {% block navbar %}
-    {% include 'includes/navbar.html' %}
+    {% if username %}
+        {% include 'includes/navbar-login.html' %}
+    {% else %}
+        {% include 'includes/navbar.html' %}
+    {% endif %}
 {% endblock %}
 {% block content %}
     <div class="container py-4 py-xl-5">
         <h2>{{ firstname }}</h2>
-        <a href="/logout" class="btn btn-outline-success btn-sm" role="button">Logout</a>
     </div>
 {% endblock %}
