@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <form action="/" method="POST">
+        {{ form.hidden_tag() }}
+        {{ form.a.label(class="form-label") }}
+        {{ form.a(class="form-control", type="number") }}
+        {{ form.b.label(class="form-label") }}
+        {{ form.b(class="form-control", type="number") }}
+        {{ form.c.label(class="form-label") }}
+        {{ form.c(class="form-control", type="number") }}
+        {{ form.submit(class="btn btn-dark mt-3 float-end") }}
+    </form>
+    <pre>
+        {% for root in roots %}
+            {{ root }}
+        {% endfor %}
+    </pre>
+</body>
+</html>
