@@ -5,10 +5,14 @@ from flask_bs4 import Bootstrap
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, PasswordField
 from wtforms.validators import DataRequired
+from flask_moment import Moment
+from datetime import datetime
 
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
 app.config['SECRET_KEY'] = 'downfield#)HRO){fe09fu3fhf){J(@{)o[ds9jhd;dw'  # example
+moment = Moment(app)
+date = datetime.now()
 
 
 class LoginForm(FlaskForm):
@@ -63,7 +67,8 @@ def internal_server_error(e):
 
 @app.route('/dashboard')
 def dashboard():
-    return render_template('dashboard.html', title='Dashboard', username=session.get('username'),firstname=session.get('firstname'))
+    return render_template('dashboard.html', title='Dashboard', username=session.get('username'),
+                           firstname=session.get('firstname'), date=date)
 
 
 if __name__ == "__main__":
