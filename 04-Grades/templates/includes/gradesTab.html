@@ -35,6 +35,45 @@
                                 {% endif %}
                             {% endfor %}
                         </td>
+                        <td>Mean</td>
+                        <td>
+                            {% for category, interim in categories.items() %}
+                                {% if category == "interim" %}
+                                    <span class="badge bg-dark"> {{ interim }}</span>
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                        {% elif term=="term2" %}
+                        <td>
+                            {% for category, grades in categories.items() %}
+                                {% if category=="answer" %}
+                                    {% for grade in grades %}
+                                        <span class="badge bg-info">{{ grade }}</span>
+                                    {% endfor %}
+                                {% elif category=="quiz" %}
+                                    {% for grade in grades %}
+                                        <span class="badge bg-warning"> {{ grade }}</span>
+                                    {% endfor %}
+                                {% elif category=="test" %}
+                                    {% for grade in grades %}
+                                        <span class="badge bg-danger">{{ grade }}</span>
+                                    {% endfor %}
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                        <td>Mean</td>
+                        <td>
+                            {% for category, interim in categories.items() %}
+                                {% if category == "interim" %}
+                                    <span class="badge bg-dark"> {{ interim }}</span>
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                        {% elif term=="yearly" %}
+                        <td>Mean</td>
+                        <td>
+                            <span class="badge bg-dark"> {{ categories }}</span>
+                        </td>
                     {% endif %}
                 {% endfor %}
             </tr>

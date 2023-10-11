@@ -70,6 +70,7 @@ def dashboard():
     with open("data/grades.json") as grades_file:
         grades = json.load(grades_file)
         grades_file.close()
+    grade
     return render_template('dashboard.html', title='Dashboard', username=session.get('username'),
                            firstname=session.get('firstname'), date=date, grades=grades)
 
