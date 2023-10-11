@@ -67,8 +67,11 @@ def internal_server_error(e):
 
 @app.route('/dashboard')
 def dashboard():
+    with open("data/grades.json") as grades_file:
+        grades = json.load(grades_file)
+        grades_file.close()
     return render_template('dashboard.html', title='Dashboard', username=session.get('username'),
-                           firstname=session.get('firstname'), date=date)
+                           firstname=session.get('firstname'), date=date, grades=grades)
 
 
 if __name__ == "__main__":

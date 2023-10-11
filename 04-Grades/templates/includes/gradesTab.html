@@ -1,0 +1,43 @@
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>Subject name</th>
+            <th>Marks - 1 semester</th>
+            <th>Mean</th>
+            <th>Semester mark</th>
+            <th>Marks - 2 semester</th>
+            <th>Mean</th>
+            <th>Semester mark</th>
+            <th>Year mean</th>
+            <th>Year mark</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for subject, terms in grades.items() %}
+            <tr>
+            <td>{{ subject | title }}</td>
+                {% for term, categories in terms.items() %}
+                    {% if term=="term1" %}
+                        <td>
+                            {% for category, grades in categories.items() %}
+                                {% if category=="answer" %}
+                                    {% for grade in grades %}
+                                        <span class="badge bg-info">{{ grade }}</span>
+                                    {% endfor %}
+                                {% elif category=="quiz" %}
+                                    {% for grade in grades %}
+                                        <span class="badge bg-warning"> {{ grade }}</span>
+                                    {% endfor %}
+                                {% elif category=="test" %}
+                                    {% for grade in grades %}
+                                        <span class="badge bg-danger">{{ grade }}</span>
+                                    {% endfor %}
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
