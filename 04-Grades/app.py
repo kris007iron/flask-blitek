@@ -71,20 +71,19 @@ def dashboard():
         grades = json.load(grades_file)
         grades_file.close()
     mean = []
-    for subject, terms in grades:        
-        for term in terms:
-            sum = 0
-            gradeC = 0
-            if term != "yearly":
-                for type in term:
-                    if type != "interim":
-                        for grade in type:
-                            sum += grade
-                            gradeC += 1
-            sum /= gradeC
-            mean.append(sum)
+    print(grades)
+    for key, value in grades.items():
+        for k, v in value.items():
+            if k != 'yearly':
+                summed = 0
+                counted = 0
+                for k2, v2 in v.items():
+                    if k2 != 'interim':
+                        for el in v2:
+                            summed += el
+                            counted += 1
+                mean.append(round(summed / counted, 2))
 
-                    
     return render_template('dashboard.html', title='Dashboard', username=session.get('username'),
                            firstname=session.get('firstname'), date=date, grades=grades, mean=mean)
 

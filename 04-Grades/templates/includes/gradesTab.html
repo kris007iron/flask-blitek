@@ -35,7 +35,7 @@
                                 {% endif %}
                             {% endfor %}
                         </td>
-                        <td>Mean</td>
+                        <td>{{ mean[0] }}</td>
                         <td>
                             {% for category, interim in categories.items() %}
                                 {% if category == "interim" %}
@@ -61,7 +61,7 @@
                                 {% endif %}
                             {% endfor %}
                         </td>
-                        <td>Mean</td>
+                        <td>{{ mean[1] }}</td>
                         <td>
                             {% for category, interim in categories.items() %}
                                 {% if category == "interim" %}
@@ -70,7 +70,7 @@
                             {% endfor %}
                         </td>
                         {% elif term=="yearly" %}
-                        <td>Mean</td>
+                        <td>{{ (mean[0] + mean[1]) / 2 }}</td>
                         <td>
                             <span class="badge bg-dark"> {{ categories }}</span>
                         </td>
