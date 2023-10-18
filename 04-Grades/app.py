@@ -65,13 +65,8 @@ def internal_server_error(e):
     return render_template('500.html', title='Internal server error'), 500
 
 
-@app.route('/dashboard')
-def dashboard():
-    with open("data/grades.json") as grades_file:
-        grades = json.load(grades_file)
-        grades_file.close()
+def calc_mean(grades):
     mean = []
-    print(grades)
     for key, value in grades.items():
         for k, v in value.items():
             if k != 'yearly':
@@ -83,9 +78,38 @@ def dashboard():
                             summed += el
                             counted += 1
                 mean.append(round(summed / counted, 2))
+    mean.append((mean[0]+mean[1]) / 2)
+    return mean
 
+def return_finals(means):
+    finals = []
+    for mean_o in means:
+        if mean_o < 2:
+            finals.append("niedostateczny")
+        elif mean_o < 2.75:
+            finals.append("dopuszczający")
+        elif mean_o < 3.75:
+            finals.append("dostateczny")
+        elif mean_o < 4.75:
+            finals.append("dobry")
+        elif mean_o <= 5:
+            finals.append("bardzo dobry")
+        else:
+            finals.append("celujący")
+    return finals
+
+
+@app.route('/dashboard')
+def dashboard():
+    with open("data/grades.json") as grades_file:
+        grades = json.load(grades_file)
+        grades_file.close()
+    mean = calc_mean(grades)
+    finals = return_finals(mean)
+    print(mean)
+    print(finals)
     return render_template('dashboard.html', title='Dashboard', username=session.get('username'),
-                           firstname=session.get('firstname'), date=date, grades=grades, mean=mean)
+                           firstname=session.get('firstname'), date=date, grades=grades, mean=mean, finals=finals)
 
 
 if __name__ == "__main__":

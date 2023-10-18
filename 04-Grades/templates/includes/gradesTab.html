@@ -39,7 +39,7 @@
                         <td>
                             {% for category, interim in categories.items() %}
                                 {% if category == "interim" %}
-                                    <span class="badge bg-dark"> {{ interim }}</span>
+                                    <span class="badge bg-dark"> {{ finals[interim] }}</span>
                                 {% endif %}
                             {% endfor %}
                         </td>
@@ -65,14 +65,14 @@
                         <td>
                             {% for category, interim in categories.items() %}
                                 {% if category == "interim" %}
-                                    <span class="badge bg-dark"> {{ interim }}</span>
+                                    <span class="badge bg-dark"> {{ finals[interim] }}</span>
                                 {% endif %}
                             {% endfor %}
                         </td>
                         {% elif term=="yearly" %}
                         <td>{{ (mean[0] + mean[1]) / 2 }}</td>
                         <td>
-                            <span class="badge bg-dark"> {{ categories }}</span>
+                            <span class="badge bg-dark"> {{ finals[2] }}</span>
                         </td>
                     {% endif %}
                 {% endfor %}

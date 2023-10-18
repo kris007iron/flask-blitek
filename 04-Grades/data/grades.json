@@ -1,16 +1,16 @@
 {
   "math": {
     "term1": {
-      "answer": [2,4,5,6],
-      "quiz": [4,3,4,3],
-      "test": [1,1,1],
-      "interim": 2
-    },
-    "term2": {
       "answer": [3,4,5,6],
       "quiz": [4,3,4,3],
       "test": [1,1,1],
-      "interim": 3
+      "interim": 0
+    },
+    "term2": {
+      "answer": [2,4,5,2],
+      "quiz": [2,3,4,3],
+      "test": [1,1,1],
+      "interim": 1
     },
     "yearly": 4
   }
