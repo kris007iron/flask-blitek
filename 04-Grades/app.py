@@ -81,6 +81,7 @@ def calc_mean(grades):
     mean.append((mean[0]+mean[1]) / 2)
     return mean
 
+
 def return_finals(means):
     finals = []
     for mean_o in means:
