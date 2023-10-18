@@ -106,11 +106,9 @@ def dashboard():
         grades = json.load(grades_file)
         grades_file.close()
     mean = calc_mean(grades)
-    finals = return_finals(mean)
-    print(mean)
-    print(finals)
     return render_template('dashboard.html', title='Dashboard', username=session.get('username'),
-                           firstname=session.get('firstname'), date=date, grades=grades, mean=mean, finals=finals)
+                           firstname=session.get('firstname'), date=date, grades=grades, mean=mean,
+                           finals=return_finals(mean))
 
 
 if __name__ == "__main__":
