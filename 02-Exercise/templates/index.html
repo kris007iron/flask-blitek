@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h1>Największa pensja {{ maxsalary }} zł</h1>
+    <h1>Najmniejsza pensja {{ minsalary }} zł</h1>
+    <h1>Średnia pensja {{ avgsalary }} zł</h1>
+    <form action="/" method="post">
+        {{ form.hidden_tag() }}
+        {{ form.a.label(class="form-label") }}
+        {{ form.a(class="form-control", type="text") }}
+        {{ form.submit(class="btn btn-dark mt-3 float-end") }}
+    </form>
+    {# display dataformated in table #}
+    <table>
+        {% for datum in dataformated %}
+    	    <tr>
+                {% for dat in datum %}
+                    <td>{{ dat }}</td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </table>
+
+</body>
+</html>
