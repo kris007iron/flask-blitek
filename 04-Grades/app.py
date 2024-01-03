@@ -1,7 +1,7 @@
 from flask import Flask, render_template, session, redirect
 from flask_bs4 import Bootstrap
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
+from wtforms import StringField, PasswordField, SubmitField, RadioField, SelectField
 from wtforms.validators import DataRequired
 from flask_moment import Moment
 from datetime import datetime
@@ -22,6 +22,14 @@ class LoginForm(FlaskForm):
     userLogin = StringField('Nazwa użytkownika:', validators=[DataRequired()])
     userPass = PasswordField('Hasło:', validators=[DataRequired()])
     submit = SubmitField('Zaloguj')
+
+
+class Grade(FlaskForm):
+    subject = StringField('Nazwa przedmiotu:', validators=[DataRequired()])
+    term = RadioField("Wybierz semestr", choices=[("term1", "Semestr 1"), ("term2", "Semestr 2")])
+    category = SelectField('Kategoria:', choices=[('answer', 'Odpowiedź'), ('quiz', 'Kartkówka'), ('test', 'Sprawdzian')])
+    grade = SelectField('Ocena:', choices=[(6, "Celujący"), (5, "Bardzo dobry"), (4, "Dobry"), (3, "Dostateczny"), (2, "Dopuszczający"), (1, "Niedostateczny")])
+    submit = SubmitField('Dodaj')
 
 
 def count_average(subject_value, term_value):
