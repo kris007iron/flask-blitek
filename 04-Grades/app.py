@@ -22,6 +22,7 @@ class LoginForm(FlaskForm):
     userPass = PasswordField('Hasło:', validators=[DataRequired()])
     submit = SubmitField('Zaloguj')
 
+
 def countAverage(subjectValue, termValue):
     """funkcja obliczająca średnie ocen"""
     with open('data/grades.json') as gradesFile:
