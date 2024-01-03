@@ -27,8 +27,11 @@ class LoginForm(FlaskForm):
 class Grade(FlaskForm):
     subject = StringField('Nazwa przedmiotu:', validators=[DataRequired()])
     term = RadioField("Wybierz semestr", choices=[("term1", "Semestr 1"), ("term2", "Semestr 2")])
-    category = SelectField('Kategoria:', choices=[('answer', 'Odpowiedź'), ('quiz', 'Kartkówka'), ('test', 'Sprawdzian')])
-    grade = SelectField('Ocena:', choices=[(6, "Celujący"), (5, "Bardzo dobry"), (4, "Dobry"), (3, "Dostateczny"), (2, "Dopuszczający"), (1, "Niedostateczny")])
+    category = SelectField('Kategoria:',
+                           choices=[('answer', 'Odpowiedź'), ('quiz', 'Kartkówka'), ('test', 'Sprawdzian')])
+    grade = SelectField('Ocena:',
+                        choices=[(6, "Celujący"), (5, "Bardzo dobry"), (4, "Dobry"),
+                                 (3, "Dostateczny"), (2, "Dopuszczający"), (1, "Niedostateczny")])
     submit = SubmitField('Dodaj')
 
 
