@@ -1,79 +1,82 @@
 <table class="table table-hover">
     <thead>
         <tr>
-            <th>Subject name</th>
-            <th>Marks - 1 semester</th>
-            <th>Mean</th>
-            <th>Semester mark</th>
-            <th>Marks - 2 semester</th>
-            <th>Mean</th>
-            <th>Semester mark</th>
-            <th>Year mean</th>
-            <th>Year mark</th>
+            <th>Nazwa przedmiotu</th>
+            <th>Oceny - semestr 1</th>
+            <th class="text-center">Średnia</th>
+            <th class="text-center">Ocena śródroczna</th>
+            <th>Oceny - semestr 2</th>
+            <th class="text-center">Średnia</th>
+            <th class="text-center">Ocena śródroczna</th>
+            <th class="text-center">Śerdnia roczna</th>
+            <th class="text-center">Ocena roczna</th>
         </tr>
     </thead>
     <tbody>
         {% for subject, terms in grades.items() %}
             <tr>
-            <td>{{ subject | title }}</td>
+                <td>{{ subject | title }}</td>
                 {% for term, categories in terms.items() %}
-                    {% if term=="term1" %}
+                    {% if term == 'term1' %}
                         <td>
                             {% for category, grades in categories.items() %}
-                                {% if category=="answer" %}
+                                {% if category == 'answer' %}
                                     {% for grade in grades %}
                                         <span class="badge bg-info">{{ grade }}</span>
                                     {% endfor %}
-                                {% elif category=="quiz" %}
+                                {% elif category == 'quiz' %}
                                     {% for grade in grades %}
-                                        <span class="badge bg-warning"> {{ grade }}</span>
+                                        <span class="badge bg-warning">{{ grade }}</span>
                                     {% endfor %}
-                                {% elif category=="test" %}
+                                {% elif category == 'test' %}
                                     {% for grade in grades %}
                                         <span class="badge bg-danger">{{ grade }}</span>
                                     {% endfor %}
                                 {% endif %}
                             {% endfor %}
                         </td>
-                        <td>{{ mean[0] }}</td>
-                        <td>
+                        <td class="text-center">{{ countAverage(subject, 'term1') }}</td>
+                        <td class="text-center">
                             {% for category, interim in categories.items() %}
-                                {% if category == "interim" %}
-                                    <span class="badge bg-dark"> {{ finals[interim] }}</span>
+                                {% if category == 'interim' %}
+                                    <span class="badge bg-dark">{{ interim }}</span>
                                 {% endif %}
                             {% endfor %}
                         </td>
-                        {% elif term=="term2" %}
-                        <td>
-                            {% for category, grades in categories.items() %}
-                                {% if category=="answer" %}
-                                    {% for grade in grades %}
-                                        <span class="badge bg-info">{{ grade }}</span>
-                                    {% endfor %}
-                                {% elif category=="quiz" %}
-                                    {% for grade in grades %}
-                                        <span class="badge bg-warning"> {{ grade }}</span>
-                                    {% endfor %}
-                                {% elif category=="test" %}
-                                    {% for grade in grades %}
-                                        <span class="badge bg-danger">{{ grade }}</span>
-                                    {% endfor %}
-                                {% endif %}
-                            {% endfor %}
-                        </td>
-                        <td>{{ mean[1] }}</td>
-                        <td>
-                            {% for category, interim in categories.items() %}
-                                {% if category == "interim" %}
-                                    <span class="badge bg-dark"> {{ finals[interim] }}</span>
-                                {% endif %}
-                            {% endfor %}
-                        </td>
-                        {% elif term=="yearly" %}
-                        <td>{{ (mean[0] + mean[1]) / 2 }}</td>
-                        <td>
-                            <span class="badge bg-dark"> {{ finals[2] }}</span>
-                        </td>
+                        {% elif term == 'term2' %}
+                            <td>
+                                {% for category, grades in categories.items() %}
+                                    {% if category == 'answer' %}
+                                        {% for grade in grades %}
+                                            <span class="badge bg-info">{{ grade }}</span>
+                                        {% endfor %}
+                                    {% elif category == 'quiz' %}
+                                        {% for grade in grades %}
+                                            <span class="badge bg-warning">{{ grade }}</span>
+                                        {% endfor %}
+                                    {% elif category == 'test' %}
+                                        {% for grade in grades %}
+                                            <span class="badge bg-danger">{{ grade }}</span>
+                                        {% endfor %}
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
+                            <td class="text-center">{{ countAverage(subject, 'term2') }}</td>
+                            <td class="text-center">
+                                {% for category, interim in categories.items() %}
+                                    {% if category == 'interim' %}
+                                        <span class="badge bg-dark">{{ interim }}</span>
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
+                            <td class="text-center">{{ yearlyAverage(subject, '') }}</td>
+                            <td class="text-center">
+                                {% for category, yearly in categories.items() %}
+                                    {% if category == 'yearly' %}
+                                        <span class="badge bg-success">{{ yearly }}</span>
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
                     {% endif %}
                 {% endfor %}
             </tr>
