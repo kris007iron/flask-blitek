@@ -14,6 +14,7 @@ app.config['SECRET_KEY'] = 'ghjghj^&*GHJ%^&*567867899iuyhgfgu%^&*IJHN'
 moment = Moment(app)
 date = datetime.now()
 
+
 class LoginForm(FlaskForm):
     """
     Formularz logowania
@@ -22,97 +23,110 @@ class LoginForm(FlaskForm):
     userPass = PasswordField('Hasło:', validators=[DataRequired()])
     submit = SubmitField('Zaloguj')
 
-def countAverage(subjectValue, termValue):
+
+def count_average(subject_value, term_value):
     """funkcja obliczająca średnie ocen"""
     with open('data/grades.json') as gradesFile:
         grades = json.load(gradesFile)
         gradesFile.close()
-    sumGrades = 0
+    sum_grades = 0
     lenght = 0
-    if subjectValue == "" and termValue == "":
+    if subject_value == "" and term_value == "":
         for subject, terms in grades.items():
             for term, categories in terms.items():
                 for category, grades in categories.items():
                     if category == 'answer' or category == 'quiz' or category == 'test':
                         for grade in grades:
-                            sumGrades += grade
+                            sum_grades += grade
                             lenght += 1
     else:
         for subject, terms in grades.items():
-            if subject == subjectValue:
+            if subject == subject_value:
                 for term, categories in terms.items():
-                    if term == termValue:
+                    if term == term_value:
                         for category, grades in categories.items():
                             if category == 'answer' or category == 'quiz' or category == 'test':
                                 for grade in grades:
-                                    sumGrades += grade
+                                    sum_grades += grade
                                     lenght += 1
     if lenght != 0:
-        return round(sumGrades / lenght, 2)
+        return round(sum_grades / lenght, 2)
+
 
 totalAverage = {}
-def yearlyAverage(subjectValue, termValue):
+
+
+def yearly_average(subject_value, term_value):
     with open('data/grades.json', encoding='utf-8') as gradesFile:
         grades = json.load(gradesFile)
         gradesFile.close()
-    sumGrades = 0
+    sum_grades = 0
     lenght = 0
-    if termValue == '':
+    if term_value == '':
         for subject, terms in grades.items():
-            if subject == subjectValue:
+            if subject == subject_value:
                 for term, categories in terms.items():
                     for category, grades in categories.items():
                         if category == 'answer' or category == 'quiz' or category == 'test':
                             for grade in grades:
-                                sumGrades += grade
+                                sum_grades += grade
                                 lenght += 1
-                                totalAverage[subject] = round(sumGrades / lenght, 2)
+                                totalAverage[subject] = round(sum_grades / lenght, 2)
     if lenght != 0:
-        return round(sumGrades / lenght, 2)
+        return round(sum_grades / lenght, 2)
+
 
 @app.route('/')
 def index():
     return render_template('index.html', title='Home')
 
+
 @app.route('/logIn', methods=['POST', 'GET'])
-def logIn():
+def log_in():
     login = LoginForm()
     with open('data/users.json') as usersFile:
         users = json.load(usersFile)
         usersFile.close()
     if login.validate_on_submit():
-        userLogin = login.userLogin.data
-        userPass = login.userPass.data
-        if userLogin == users['userLogin'] and userPass == users['userPass']:
-            session['userLogin'] = userLogin
+        user_login = login.userLogin.data
+        user_pass = login.userPass.data
+        if user_login == users['userLogin'] and user_pass == users['userPass']:
+            session['userLogin'] = user_login
             session['firstName'] = users['firstName']
             return redirect('dashboard')
     return render_template('login.html', title='Logowanie', login=login)
 
+
 @app.route('/logOut')
-def logOut():
+def log_out():
     session.pop('userLogin')
     session.pop('firstName')
-    return redirect('logIn')
+    return redirect('log_in')
+
 
 @app.route('/dashboard')
 def dashboard():
     with open('data/grades.json') as gradesFile:
         grades = json.load(gradesFile)
         gradesFile.close()
-    weatherSource = requests.get('https://danepubliczne.imgw.pl/api/data/synop/station/krakow')
-    weather = json.loads(weatherSource.content)
-    airQualitySource = requests.get('https://api.gios.gov.pl/pjp-api/rest/aqindex/getIndex/400')
-    airQuality = json.loads(airQualitySource.content)
-    return render_template('dashboard.html', title='Dashboard', userLogin=session.get('userLogin'), firstName=session.get('firstName'), date=date, grades=grades, countAverage=countAverage, yearlyAverage=yearlyAverage, weather=weather, airQuality=airQuality)
+    weather_source = requests.get('https://danepubliczne.imgw.pl/api/data/synop/station/krakow')
+    weather = json.loads(weather_source.content)
+    air_quality_source = requests.get('https://api.gios.gov.pl/pjp-api/rest/aqindex/getIndex/400')
+    air_quality = json.loads(air_quality_source.content)
+    return render_template('dashboard.html', title='Dashboard', userLogin=session.get('userLogin'),
+                           firstName=session.get('firstName'), date=date, grades=grades, countAverage=count_average,
+                           yearlyAverage=yearly_average, weather=weather, airQuality=air_quality)
+
 
 @app.errorhandler(404)
-def pageNotFound(e):
+def page_not_found():
     return render_template('404.html', title='Page not found'), 404
 
+
 @app.errorhandler(500)
-def serverError(e):
+def server_error():
     return render_template('500.html', title='Wewnętrzny błąd serwera :('), 500
+
 
 if __name__ == '__main__':
     app.run(debug=True)
