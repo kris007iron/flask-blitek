@@ -1,18 +1,1 @@
-{
-  "matematyka": {
-    "term1": {"answer": [2, 3, 5, 4, 6], "quiz": [2, 2, 1, 4, 3], "test": [4, 3], "interim": 2},
-    "term2": {"answer": [2, 3, 5, 4, 6], "quiz": [2, 2, 1, 4, 3], "test": [4, 3], "interim": 2, "yearly": 3}
-  },
-  "chemia": {
-    "term1": {"answer": [2, 4, 6], "quiz": [2, 1, 4, 3], "test": [4, 3, 4, 4], "interim": 3},
-    "term2": {"answer": [2, 4, 6], "quiz": [2, 3], "test": [4, 3], "interim": 2, "yearly": 3}
-  },
-  "fizyka": {
-    "term1": {"answer": [2, 4, 6], "quiz": [2, 1, 4, 3], "test": [4, 3, 4, 4], "interim": 3},
-    "term2": {"answer": [2, 4, 6], "quiz": [2, 3], "test": [4, 3], "interim": 2, "yearly": 3}
-  },
-  "informatyka": {
-    "term1": {"answer": [2, 5, 5, 5], "quiz": [2, 1, 5, 4], "test": [4, 3, 4, 4, 5], "interim": 4},
-    "term2": {"answer": [2, 4, 6], "quiz": [2, 3, 5, 5, 5], "test": [4, 3, 6, 6, 6], "interim": 5, "yearly": 4}
-  }
-}
+{"matematyka": {"term1": {"answer": [2, 3, 5, 4, 6], "quiz": [2, 2, 1, 4, 3], "test": [4, 3], "interim": 2}, "term2": {"answer": [2, 3, 5, 4, 6], "quiz": [2, 2, 1, 4, 3], "test": [4, 3], "interim": 2, "yearly": 3}}, "chemia": {"term1": {"answer": [2, 4, 6], "quiz": [2, 1, 4, 3], "test": [4, 3, 4, 4], "interim": 3}, "term2": {"answer": [2, 4, 6], "quiz": [2, 3], "test": [4, 3], "interim": 2, "yearly": 3}}, "fizyka": {"term1": {"answer": [2, 4, 6], "quiz": [2, 1, 4, 3], "test": [4, 3, 4, 4], "interim": 3}, "term2": {"answer": [2, 4, 6], "quiz": [2, 3], "test": [4, 3], "interim": 2, "yearly": 3}}, "informatyka": {"term1": {"answer": [2, 5, 5, 5], "quiz": [2, 1, 5, 4], "test": [4, 3, 4, 4, 5], "interim": 4}, "term2": {"answer": [2, 4, 6], "quiz": [2, 3, 5, 5, 5], "test": [4, 3, 6, 6, 6], "interim": 5, "yearly": 4}}, "WF": {"term1": {"answer": [], "quiz": [], "test": [], "interim": 0}, "term2": {"answer": [], "quiz": [], "test": [], "interim": 0, "yearly": 0}}, "Plastyka": {"term1": {"answer": [], "quiz": [], "test": [], "interim": 0}, "term2": {"answer": [], "quiz": [], "test": [], "interim": 0, "yearly": 0}}}
