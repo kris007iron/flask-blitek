@@ -11,6 +11,18 @@
 {% endblock %}
 {% block content %}
     <div class="px-5">
+        <div class="row">
+            {% with messages = get_flashed_messages(with_categories=True) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}`
+        </div>
         <table class="table table-sm">
             <thead>
                 <tr>
@@ -29,11 +41,40 @@
                         <td>{{ user.lastName }}</td>
                         <td>{{ user.userMail }}</td>
                         <td class="text-end">
-                            <a href="#" class="btn btn-outline-primary btn-sm"><i class="bi bi-key"></i></a>
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#changePasswd{{ user.id }}" class="btn btn-outline-primary btn-sm"><i class="bi bi-key"></i></a>
                             <a href="#" class="btn btn-outline-dark btn-sm"><i class="bi bi-pencil-square"></i></a>
                             <a href="#" class="btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i></a>
                         </td>
                     </tr>
+                    <div class="modal fade" id="changePasswd" tabindex="-1" aria-labelledby="changePasswdLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="modal-title" id="addUserModal">
+                        <i class="bi bi-person-add pe-2 fs-5"></i>Dodaj nowego użytkownika
+                    </p>
+                </div>
+                <form action="{{ url_for('change-password')}}" method="post">
+                    {{ change_password.hidden_tag() }}
+                    <div style="display: none">
+                        {{ change_password.user_id(class="form-control", value=user.id) }}
+                    </div>
+                    <div class="modal-body">
+                        <div class="d-grid py-3">
+                            <div class="input-group flex-nowrap py-1">
+                                <span class="input-group-text"><i class="bi bi-key text-secondary"></i></span>
+                                {{  change_password.userPass(class="form-control", placeholder="Hasło") }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-sm btn-secondary" type="button" data-bs-dismiss="modal">Anuluj</button>
+                        {{ change_password.submit(class="btn btn-sm btn-primary", value="Dodaj") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+                    </div>
                 {% endfor %}
             </tbody>
         </table>
@@ -43,6 +84,8 @@
         </div>
     </div>
 
+
+
     <div class="modal fade" id="addUser" tabindex="-1" aria-labelledby="addUserLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -51,28 +94,41 @@
                         <i class="bi bi-person-add pe-2 fs-5"></i>Dodaj nowego użytkownika
                     </p>
                 </div>
-                <form action="" method="post">
+                <form action="/add-user" method="post">
+                    {{ add_user.hidden_tag() }}
                     <div class="modal-body">
                         <div class="d-grid py-3">
                             <div class="input-group flex-nowrap py-1">
                                 <span class="input-group-text"><i class="bi bi-person text-secondary"></i></span>
+                                {{  add_user.firstName(class="form-control", placeholder="Imię") }}
                             </div>
                             <div class="input-group flex-nowrap py-1">
                                 <span class="input-group-text"><i class="bi bi-person text-secondary"></i></span>
+                                {{  add_user.lastName(class="form-control", placeholder="Nazwisko") }}
                             </div>
                             <div class="input-group flex-nowrap py-1">
                                 <span class="input-group-text">@</span>
+                                {{  add_user.userMail(class="form-control", placeholder="Email") }}
                             </div>
                             <div class="input-group flex-nowrap py-1">
                                 <span class="input-group-text"><i class="bi bi-key text-secondary"></i></span>
+                                {{  add_user.userPass(class="form-control", placeholder="Hasło") }}
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button class="btn btn-sm btn-secondary" type="button" data-bs-dismiss="modal">Anuluj</button>
+                        {{ add_user.submit(class="btn btn-sm btn-primary", value="Dodaj") }}
                     </div>
                 </form>
             </div>
         </div>
     </div>
+
+    {#    delete mode #}
+{#    {% for user in users %}#}
+{#        <div class="modal fade">#}
+{##}
+{#        </div>#}
+{#    {% endfor %}#}
 {% endblock %}

@@ -55,6 +55,12 @@ class Register(FlaskForm):
     userPass = PasswordField('Hasło', validators=[DataRequired()], render_kw={"placeholder": "Hasło"})
     submit = SubmitField('Rejestruj')
 
+class ChangePassword(FlaskForm):
+    """formularz zmiany hasła"""
+    userId = StringField('Id', validators=[DataRequired()], render_kw={"placeholder": "Id"})
+    userPass = PasswordField('Hasło', validators=[DataRequired()], render_kw={"placeholder": "Hasło"})
+    submit = SubmitField('Zmień hasło')
+
 # główna aplikacja
 @app.route('/')
 def index():
@@ -104,7 +110,50 @@ def logout():
 @login_required
 def dashboard():
     users = Users.query.all()
-    return render_template('dashboard.html', title='Dashboard', users=users)
+    add_user = Register()
+    change_password = ChangePassword()
+    return render_template('dashboard.html', title='Dashboard', users=users, add_user=add_user, change_password=change_password)
+
+
+@app.route('/add-user', methods=['POST', 'GET'])
+@login_required
+def add_user():
+    add_user = Register()
+    if add_user.validate_on_submit():
+        try:
+            hash_pass = bcrypt.generate_password_hash(add_user.userPass.data)
+            new_user = Users(userMail=add_user.userMail.data, userPass=hash_pass, firstName=add_user.firstName.data, lastName=add_user.lastName.data)
+            db.session.add(new_user)
+            db.session.commit()
+            flash('Użytkownik został dodany', 'success')
+            return redirect(url_for('dashboard'))
+        except Exception:
+            flash('Błąd rejestracji, ten email jest już zarejestrowany', 'danger')
+            return redirect(url_for('dashboard'))
+    return render_template('add-user.html', title='Dodaj użytkownika', headline='Dodaj użytkownika', add_user=add_user)
+
+# zmiana hasła
+
+
+@app.route('/change-password', methods=['POST', 'GET'])
+@login_required
+def change_password():
+    change_password_f = ChangePassword()
+    user = Users.query.filter_by(id=id).first()
+    if user:
+        if change_password_f.validate_on_submit():
+            try:
+                hash_pass = bcrypt.generate_password_hash(change_password_f.userPass.data)
+                user.userPass = hash_pass
+                db.session.commit()
+                flash('Hasło zostało zmienione', 'success')
+                return redirect(url_for('dashboard'))
+            except Exception:
+                flash('Błąd zmiany hasła', 'danger')
+                return redirect(url_for('dashboard'))
+        return render_template('dashboard.html', title='Zmień hasło', headline='Zmień hasło')
+    else:
+        return redirect(url_for('dashboard'))
 
 
 if __name__ == '__main__':
