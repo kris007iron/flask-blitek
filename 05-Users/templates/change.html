@@ -21,34 +21,27 @@
                 {% endif %}
             {% endwith %}
         </div>
-        <div class="row text-center">
-            <i class="bi bi-people display-1 text-secondary"></i>
-        </div>
         <div class="row">
             <div class="col-lg-4 offset-lg-4">
                 <p class="display-6 text-center">{{ headline }}</p>
-                <p class="text-center">Zastosowanie Flask-Login i Flask-SQLAlchemy</p>
+                <p class="text-center">Zmiana hasla</p>
                 <div class="d-grid py-3">
                     <form method="post">
-                        {{ registerForm.hidden_tag() }}
+                        {{ changeLoggedUser.hidden_tag() }}
                         <div class="input-group flex-nowrap py-1">
                             <span class="input-group-text text-secondary"><i class="bi bi-person text-secondary"></i></span>
-                            {{ registerForm.firstName(class="form-control") }}
+                            {{ changeLoggedUser.userEmail(class="form-control") }}
                         </div>
                         <div class="input-group flex-nowrap py-1">
                             <span class="input-group-text text-secondary"><i class="bi bi-person text-secondary"></i></span>
-                            {{ registerForm.lastName(class="form-control") }}
+                            {{ changeLoggedUser.userPass(class="form-control") }}
                         </div>
                         <div class="input-group flex-nowrap py-1">
                             <span class="input-group-text text-secondary">@</span>
-                            {{ registerForm.userMail(class="form-control") }}
-                        </div>
-                        <div class="input-group flex-nowrap py-1">
-                            <span class="input-group-text text-secondary"><i class="bi bi-key text-secondary"></i></span>
-                            {{ registerForm.userPass(class="form-control") }}
+                            {{ changeLoggedUser.userNewPass(class="form-control") }}
                         </div>
                         <div class="d-grid py-5">
-                            {{ registerForm.submit(class="btn btn-outline-secondary rounded-1") }}
+                            {{ changeLoggedUser.submit(class="btn btn-outline-secondary rounded-1") }}
                         </div>
                     </form>
                 </div>

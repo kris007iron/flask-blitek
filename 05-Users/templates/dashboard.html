@@ -21,71 +21,46 @@
                         </div>
                     {% endfor %}
                 {% endif %}
-            {% endwith %}`
+            {% endwith %}
         </div>
-        <table class="table table-sm">
+        <table class="table table-sm align-middle">
             <thead>
                 <tr>
-                    <th scope="col">ID</th>
-                    <th scope="col">Imię</th>
-                    <th scope="col">Nazwisko</th>
-                    <th scope="col">Email</th>
-                    <th scope="col">Edycja</th>
+                    <th>ID</th>
+                    <th>Imię</th>
+                    <th>Nazwisko</th>
+                    <th>Mail</th>
+                    <th>Edycja</th>
                 </tr>
             </thead>
             <tbody>
                 {% for user in users %}
                     <tr>
-                        <th scope="row">{{ user.id }}</th>
+                        <td>{{ user.id }}</td>
                         <td>{{ user.firstName }}</td>
                         <td>{{ user.lastName }}</td>
                         <td>{{ user.userMail }}</td>
                         <td class="text-end">
-                            <a href="#" data-bs-toggle="modal" data-bs-target="#changePasswd{{ user.id }}" class="btn btn-outline-primary btn-sm"><i class="bi bi-key"></i></a>
-                            <a href="#" class="btn btn-outline-dark btn-sm"><i class="bi bi-pencil-square"></i></a>
-                            <a href="#" class="btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i></a>
+                            <a href="#" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editUserPass{{ user.id }}">
+                                <i class="bi bi-key"></i>
+                            </a>
+                            <a href="#" class="btn btn-sm btn-outline-dark" data-bs-toggle="modal" data-bs-target="#editUser{{ user.id }}">
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
+                            <a href="#" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteUser{{ user.id }}">
+                                <i class="bi bi-trash3"></i>
+                            </a>
                         </td>
                     </tr>
-                    <div class="modal fade" id="changePasswd" tabindex="-1" aria-labelledby="changePasswdLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <p class="modal-title" id="addUserModal">
-                        <i class="bi bi-person-add pe-2 fs-5"></i>Dodaj nowego użytkownika
-                    </p>
-                </div>
-                <form action="{{ url_for('change-password')}}" method="post">
-                    {{ change_password.hidden_tag() }}
-                    <div style="display: none">
-                        {{ change_password.user_id(class="form-control", value=user.id) }}
-                    </div>
-                    <div class="modal-body">
-                        <div class="d-grid py-3">
-                            <div class="input-group flex-nowrap py-1">
-                                <span class="input-group-text"><i class="bi bi-key text-secondary"></i></span>
-                                {{  change_password.userPass(class="form-control", placeholder="Hasło") }}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn btn-sm btn-secondary" type="button" data-bs-dismiss="modal">Anuluj</button>
-                        {{ change_password.submit(class="btn btn-sm btn-primary", value="Dodaj") }}
-                    </div>
-                </form>
-            </div>
-        </div>
-                    </div>
                 {% endfor %}
             </tbody>
         </table>
         <div class="row float-end">
-            <a href="#" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#addUser">
-                Dodaj użytkownika</a>
+            <a href="#" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#addUser">Dodaj użytkownika</a>
         </div>
     </div>
 
-
-
+    <!-- addUserModal -->
     <div class="modal fade" id="addUser" tabindex="-1" aria-labelledby="addUserLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -94,41 +69,140 @@
                         <i class="bi bi-person-add pe-2 fs-5"></i>Dodaj nowego użytkownika
                     </p>
                 </div>
-                <form action="/add-user" method="post">
-                    {{ add_user.hidden_tag() }}
+                <form action="{{ url_for('addUser') }}" method="post">
+                    {{ addUser.hidden_tag() }}
                     <div class="modal-body">
                         <div class="d-grid py-3">
                             <div class="input-group flex-nowrap py-1">
                                 <span class="input-group-text"><i class="bi bi-person text-secondary"></i></span>
-                                {{  add_user.firstName(class="form-control", placeholder="Imię") }}
+                                {{ addUser.firstName(class="form-control") }}
                             </div>
                             <div class="input-group flex-nowrap py-1">
                                 <span class="input-group-text"><i class="bi bi-person text-secondary"></i></span>
-                                {{  add_user.lastName(class="form-control", placeholder="Nazwisko") }}
+                                {{ addUser.lastName(class="form-control") }}
                             </div>
                             <div class="input-group flex-nowrap py-1">
-                                <span class="input-group-text">@</span>
-                                {{  add_user.userMail(class="form-control", placeholder="Email") }}
+                                <span class="input-group-text text-secondary">@</span>
+                                {{ addUser.userMail(class="form-control") }}
                             </div>
                             <div class="input-group flex-nowrap py-1">
                                 <span class="input-group-text"><i class="bi bi-key text-secondary"></i></span>
-                                {{  add_user.userPass(class="form-control", placeholder="Hasło") }}
+                                {{ addUser.userPass(class="form-control") }}
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button class="btn btn-sm btn-secondary" type="button" data-bs-dismiss="modal">Anuluj</button>
-                        {{ add_user.submit(class="btn btn-sm btn-primary", value="Dodaj") }}
+                        <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                        {{ addUser.submit(class="btn btn-sm btn-outline-secondary", value="Dodaj") }}
                     </div>
                 </form>
             </div>
         </div>
     </div>
 
-    {#    delete mode #}
-{#    {% for user in users %}#}
-{#        <div class="modal fade">#}
-{##}
-{#        </div>#}
-{#    {% endfor %}#}
+    <!-- editUSerModal -->
+    {% for user in users %}
+    <div class="modal fade" id="editUser{{ user.id }}" tabindex="-1" aria-labelledby="editUserLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="modal-title" id="editUserModal">
+                        <i class="bi bi-person-gear pe-2 fs-5"></i>Edycja danych użytkownika
+                    </p>
+                </div>
+                <form action="{{ url_for('editUser', id=user.id) }}" method="post">
+                    {{ editUser.hidden_tag() }}
+                    <div class="modal-body">
+                        <div class="d-grid py-3">
+                            <div class="input-group flex-nowrap py-1">
+                                <span class="input-group-text"><i class="bi bi-person text-secondary"></i></span>
+                                {{ editUser.firstName(class="form-control", value=user.firstName) }}
+                            </div>
+                            <div class="input-group flex-nowrap py-1">
+                                <span class="input-group-text"><i class="bi bi-person text-secondary"></i></span>
+                                {{ editUser.lastName(class="form-control", value=user.lastName) }}
+                            </div>
+                            <div class="input-group flex-nowrap py-1">
+                                <span class="input-group-text text-secondary">@</span>
+                                {{ editUser.userMail(class="form-control", value=user.userMail) }}
+                            </div>
+                            <div class="input-group flex-nowrap py-1">
+                                <span class="input-group-text"><i class="bi bi-key text-secondary"></i></span>
+                                {{ editUser.userPass(class="form-control") }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                        {{ editUser.submit(class="btn btn-sm btn-outline-secondary", value="Zapisz") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    <!-- deleteUserModal -->
+    {% for user in users %}
+    <div class="modal fade" id="deleteUser{{ user.id }}" tabindex="-1" aria-labelledby="deleteUserLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="modal-title" id="deleteUserModal">
+                        <i class="bi bi-person-dash pe-2 fs-5"></i>Usuń użytkownika
+                    </p>
+                </div>
+                <div class="modal-body">
+                    Czy na pewno chcesz usunąć użytkownika {{ user.firstName }} {{ user.lastName }}?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                    <a href="{{ url_for('deleteUser', id=user.id) }}" class="btn btn-sm btn-danger">Tak</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    <!-- editUserPassModal -->
+    {% for user in users %}
+    <div class="modal fade" id="editUserPass{{ user.id }}" tabindex="-1" aria-labelledby="editUserPassLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="modal-title" id="editUserPassLabel">
+                        <i class="bi bi-key pe-2 fs-5"></i>Zmiana hasła użytkownika
+                    </p>
+                </div>
+{#                <form method="post" action="{{ url_for('editUserPass', id=user.id) }}">#}
+                <form method="post" action="{{ url_for('editUserPass') }}">
+                    <div class="modal-body">
+                        {{ editUserPass.hidden_tag() }}
+                        <div class="input-group flex-nowrap py-1 visually-hidden">
+                            <span class="input-group-text"><i class="bi bi-person text-secondary"></i></span>
+                            {{ editUserPass.firstName(class="form-control", value=user.firstName) }}
+                        </div>
+                        <div class="input-group flex-nowrap py-1 visually-hidden">
+                            <span class="input-group-text"><i class="bi bi-person text-secondary"></i></span>
+                            {{ editUserPass.lastName(class="form-control", value=user.lastName) }}
+                        </div>
+                        <div class="input-group flex-nowrap py-1 visually-hidden">
+                            <span class="input-group-text"><i class="bi bi-person text-secondary"></i></span>
+                            {{ editUserPass.userMail(class="form-control", value=user.userMail) }}
+                        </div>
+                        <div class="input-group flex-nowrap py-1">
+                            <span class="input-group-text"><i class="bi bi-person text-secondary"></i></span>
+                            {{ editUserPass.userPass(class="form-control") }}
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                        {{ editUserPass.submit(class="btn btn-sm btn-outline-secondary", value="Zapisz") }}
+
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
 {% endblock %}
