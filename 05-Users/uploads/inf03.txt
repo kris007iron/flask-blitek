@@ -1,0 +1,19 @@
+Instalacja i zarządzanie xampp
+chmod 755 xampp-linux-x64-7.1.10-0-installer.run
+sudo ./xampp-linux-x64-7.1.10-0-installer.run
+cd /opt/lampp/
+sudo /opt/lampp/lampp start
+sudo /opt/lampp/lampp stop
+sudo /opt/lampp/manager-linux-x64.run - xampp panel
+
+Instalacja Chrome
+wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+sudo dpkg -i google-chrome-stable_current_amd64.deb
+
+User
+sudo adduser egzamin, pass: inf032023
+sudo deluser egzamin -r
+sudo usermod -aG sudo egzamin
+
+Katalog roboczy
+/opt/lampp/htdocs

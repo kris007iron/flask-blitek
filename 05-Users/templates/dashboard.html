@@ -23,41 +23,11 @@
                 {% endif %}
             {% endwith %}
         </div>
-        <table class="table table-sm align-middle">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Imię</th>
-                    <th>Nazwisko</th>
-                    <th>Mail</th>
-                    <th>Edycja</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for user in users %}
-                    <tr>
-                        <td>{{ user.id }}</td>
-                        <td>{{ user.firstName }}</td>
-                        <td>{{ user.lastName }}</td>
-                        <td>{{ user.userMail }}</td>
-                        <td class="text-end">
-                            <a href="#" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editUserPass{{ user.id }}">
-                                <i class="bi bi-key"></i>
-                            </a>
-                            <a href="#" class="btn btn-sm btn-outline-dark" data-bs-toggle="modal" data-bs-target="#editUser{{ user.id }}">
-                                <i class="bi bi-pencil-square"></i>
-                            </a>
-                            <a href="#" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteUser{{ user.id }}">
-                                <i class="bi bi-trash3"></i>
-                            </a>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        <div class="row float-end">
-            <a href="#" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#addUser">Dodaj użytkownika</a>
-        </div>
+        {% if current_user.userRole == 'admin' %}
+            {% include "includes/admin-dash.html" %}
+        {% else %}
+            {% include "includes/user-dash.html" %}
+        {% endif %}
     </div>
 
     <!-- addUserModal -->
@@ -89,6 +59,10 @@
                                 <span class="input-group-text"><i class="bi bi-key text-secondary"></i></span>
                                 {{ addUser.userPass(class="form-control") }}
                             </div>
+                            <div class="input-group flex-nowrap py-1">
+                                <span class="input-group-text"><i class="bi bi-person-gear text-secondary"></i></span>
+                                {{ addUser.userRole(class="form-control") }}
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -100,7 +74,7 @@
         </div>
     </div>
 
-    <!-- editUSerModal -->
+    <!-- editUserModal -->
     {% for user in users %}
     <div class="modal fade" id="editUser{{ user.id }}" tabindex="-1" aria-labelledby="editUserLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -127,8 +101,8 @@
                                 {{ editUser.userMail(class="form-control", value=user.userMail) }}
                             </div>
                             <div class="input-group flex-nowrap py-1">
-                                <span class="input-group-text"><i class="bi bi-key text-secondary"></i></span>
-                                {{ editUser.userPass(class="form-control") }}
+                                <span class="input-group-text"><i class="bi bi-person-gear text-secondary"></i></span>
+                                {{ editUser.userRole(class="form-control") }}
                             </div>
                         </div>
                     </div>
@@ -174,22 +148,10 @@
                         <i class="bi bi-key pe-2 fs-5"></i>Zmiana hasła użytkownika
                     </p>
                 </div>
-{#                <form method="post" action="{{ url_for('editUserPass', id=user.id) }}">#}
-                <form method="post" action="{{ url_for('editUserPass') }}">
+                <form method="post" action="{{ url_for('editUserPass', id=user.id) }}">
+{#                <form method="post" action="{{ url_for('editUserPass') }}">#}
                     <div class="modal-body">
                         {{ editUserPass.hidden_tag() }}
-                        <div class="input-group flex-nowrap py-1 visually-hidden">
-                            <span class="input-group-text"><i class="bi bi-person text-secondary"></i></span>
-                            {{ editUserPass.firstName(class="form-control", value=user.firstName) }}
-                        </div>
-                        <div class="input-group flex-nowrap py-1 visually-hidden">
-                            <span class="input-group-text"><i class="bi bi-person text-secondary"></i></span>
-                            {{ editUserPass.lastName(class="form-control", value=user.lastName) }}
-                        </div>
-                        <div class="input-group flex-nowrap py-1 visually-hidden">
-                            <span class="input-group-text"><i class="bi bi-person text-secondary"></i></span>
-                            {{ editUserPass.userMail(class="form-control", value=user.userMail) }}
-                        </div>
                         <div class="input-group flex-nowrap py-1">
                             <span class="input-group-text"><i class="bi bi-person text-secondary"></i></span>
                             {{ editUserPass.userPass(class="form-control") }}
@@ -205,4 +167,54 @@
         </div>
     </div>
     {% endfor %}
+
+    <!-- createFolderModal -->
+    <div class="modal fade" id="createFolder" tabindex="-1" aria-labelledby="createFolderLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="modal-title" id="createFolderModal">
+                        <i class="bi bi-folder-plus pe-2 fs-5"></i>Tworzenie nowego folderu
+                    </p>
+                </div>
+                <form method="post" action="#">
+                    <div class="modal-body">
+                        <div class="input-group">
+                            {{ createFolder.hidden_tag() }}
+                            {{ createFolder.folderName(class="form-control rounded-1") }}
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                        {{ createFolder.submit(class="btn btn-sm btn-outline-secondary") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- uploadFileModal -->
+    <div class="modal fade" id="uploadFile" tabindex="-1" aria-labelledby="uploadFileLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="modal-title" id="uploadFileModal">
+                        <i class="bi bi-cloud-arrow-up pe-2 fs-5"></i>Przesyłanie plików
+                    </p>
+                </div>
+                <form method="post" action="{{ url_for('uploadFile') }}" enctype="multipart/form-data">
+                    <div class="modal-body">
+                        <div class="input-group">
+                            {{ uploadFile.hidden_tag() }}
+                            {{ uploadFile.fileName(class="form-control rounded-1") }}
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                        {{ uploadFile.submit(class="btn btn-sm btn-outline-secondary") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 {% endblock %}

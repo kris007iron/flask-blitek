@@ -1,0 +1,3 @@
+host: 10.0.0.37
+login: ubuntu
+pass: xrWvAQCJJnbP
