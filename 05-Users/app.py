@@ -37,6 +37,23 @@ class Users(db.Model, UserMixin):
     def is_authenticated(self):
         return True
 
+
+class Folders(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    folderName = db.Column(db.String(50))
+    type = db.Column(db.String(20))
+    icon = db.Column(db.String(20))
+    time = db.Column(db.DateTime)
+
+class Files(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    fileName = db.Column(db.String(50))
+    type = db.Column(db.String(20))
+    size = db.Column(db.Integer)
+    time = db.Column(db.DateTime)
+    icon = db.Column(db.String(20))
+
+
 # konfiguracja Flask-Login
 loginManager = LoginManager()
 loginManager.init_app(app)
@@ -171,8 +188,8 @@ def dashboard():
     search = Search()
     createFolder = CreateFolders()
     uploadFile = UploadFiles()
-    files = os.listdir(app.config['UPLOAD_PATH'])
-    return render_template('dashboard.html', title='Dashboard', users=users, addUser=addUser, editUser=editUser, editUserPass=editUserPass, search=search, createFolder=createFolder, uploadFile=uploadFile, files=files)
+    #files = os.listdir(app.config['UPLOAD_PATH'])
+    return render_template('dashboard.html', title='Dashboard', users=users, addUser=addUser, editUser=editUser, editUserPass=editUserPass, search=search, createFolder=createFolder, uploadFile=uploadFile, )#files=files
 
 @app.route('/add-user', methods=['GET', 'POST'])
 @login_required
@@ -249,7 +266,13 @@ def uploadFile():
         fileExtension = os.path.splitext(fileName)[1]
         if fileExtension not in app.config['UPLOAD_EXTENSIONS']:
             abort(400)
-        uploadedFile.save(os.path.join(app.config['UPLOAD_PATH'], fileName))
+        if fileExtension == "png":
+            uploadedFile.save(os.path.join(app.config['UPLOAD_PATH'], fileName))
+            fileSize = ''
+            time = ''
+            newFile = Files(fileName=fileName, type=fileExtension, size=fileSize, time=time, icon='bi bi-filetype-png')
+            db.session.add(newFile)
+            db.session.commit()
         flash('Plik przesłany poprawnie', 'success')
         return redirect(url_for('dashboard'))
 
