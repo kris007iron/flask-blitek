@@ -177,7 +177,7 @@
                         <i class="bi bi-folder-plus pe-2 fs-5"></i>Tworzenie nowego folderu
                     </p>
                 </div>
-                <form method="post" action="#">
+                <form method="post" action="{{ url_for('createFolder') }}">
                     <div class="modal-body">
                         <div class="input-group">
                             {{ createFolder.hidden_tag() }}
@@ -217,4 +217,55 @@
             </div>
         </div>
     </div>
+
+    <!-- rename-folder-modal -->
+    {% for folder in folders %}
+    <div class="modal fade" id="renameFolder{{ folder.folderName }}" tabindex="-1" aria-labelledby="renameFolderLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="modal-title" id="renameFolderModal">
+                        <i class="bi bi-folder-plus pe-2 fs-5"></i>Zmiana nazwy folderu
+                    </p>
+                </div>
+                <form method="post" action="{{ url_for('renameFolder', name=folder.folderName) }}">
+                    <div class="modal-body">
+                        <div class="input-group">
+                            {{ renameFolder.hidden_tag() }}
+                            {{ renameFolder.folderName(class="form-control rounded-1", value=folder.folderName) }}
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                        {{ renameFolder.submit(class="btn btn-sm btn-outline-secondary") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    <!-- delete-folder-modal -->
+    {% for folder in folders %}
+    <div class="modal fade" id="deleteFolder{{ folder.folderName }}" tabindex="-1" aria-labelledby="deleteFolderLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="modal-title" id="deleteFolderModal">
+                        <i class="bi bi-folder-dash pe-2 fs-5"></i>Usuń folder
+                    </p>
+                </div>
+                <div class="modal-body">
+                    Czy na pewno chcesz usunąć folder {{ folder.folderName }}?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                    <form action="{{ url_for('deleteFolder', name=folder.folderName) }}" method="post">
+                        {{ deleteFolder.hidden_tag() }}
+                        {{ deleteFolder.submit(class="btn btn-sm btn-danger", value="Tak") }}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
 {% endblock %}

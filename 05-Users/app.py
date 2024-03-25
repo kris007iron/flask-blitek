@@ -10,6 +10,7 @@ from werkzeug.utils import secure_filename
 from flask_bcrypt import Bcrypt
 from flask_bs4 import Bootstrap
 import os
+from datetime import datetime
 
 # konfiguracja aplikacji
 app = Flask(__name__)
@@ -37,22 +38,20 @@ class Users(db.Model, UserMixin):
     def is_authenticated(self):
         return True
 
-
 class Folders(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    folderName = db.Column(db.String(50))
+    folderName = db.Column(db.String(50), unique=True)
     type = db.Column(db.String(20))
     icon = db.Column(db.String(20))
-    time = db.Column(db.DateTime)
+    time = db.Column(db.String(20))
 
 class Files(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    fileName = db.Column(db.String(50))
+    fileName = db.Column(db.String(50), unique=True)
     type = db.Column(db.String(20))
-    size = db.Column(db.Integer)
-    time = db.Column(db.DateTime)
     icon = db.Column(db.String(20))
-
+    time = db.Column(db.String(20))
+    size = db.Column(db.String(20))
 
 # konfiguracja Flask-Login
 loginManager = LoginManager()
@@ -124,6 +123,16 @@ class UploadFiles(FlaskForm):
     fileName = FileField('Plik', validators=[FileAllowed([app.config['UPLOAD_EXTENSIONS']])], render_kw={'placeholder': '.txt, .png, .jpg, .jpeg'})
     submit = SubmitField('Prześlij')
 
+class RenameFolder(FlaskForm):
+    """formularz zmiany nazwy folderu"""
+    folderName = StringField('Nowa nazwa folderu', validators=[DataRequired()], render_kw={'placeholder': 'Nowa nazwa folderu'})
+    submit = SubmitField('Zapisz')
+
+class DeleteFolder(FlaskForm):
+    """formularz usuwania folderu"""
+    submit = SubmitField('Usuń')
+
+
 # główna aplikacja
 @app.route('/')
 def index():
@@ -188,8 +197,11 @@ def dashboard():
     search = Search()
     createFolder = CreateFolders()
     uploadFile = UploadFiles()
-    #files = os.listdir(app.config['UPLOAD_PATH'])
-    return render_template('dashboard.html', title='Dashboard', users=users, addUser=addUser, editUser=editUser, editUserPass=editUserPass, search=search, createFolder=createFolder, uploadFile=uploadFile, )#files=files
+    folders = Folders.query.all()
+    files = Files.query.all()
+    renameFolder = RenameFolder()
+    deleteFolder = DeleteFolder()
+    return render_template('dashboard.html', title='Dashboard', users=users, addUser=addUser, editUser=editUser, editUserPass=editUserPass, search=search, createFolder=createFolder, uploadFile=uploadFile, files=files, folders=folders, current_user=current_user, datetime=datetime, os=os, renameFolder=renameFolder, deleteFolder=deleteFolder)
 
 @app.route('/add-user', methods=['GET', 'POST'])
 @login_required
@@ -266,15 +278,80 @@ def uploadFile():
         fileExtension = os.path.splitext(fileName)[1]
         if fileExtension not in app.config['UPLOAD_EXTENSIONS']:
             abort(400)
-        if fileExtension == "png":
-            uploadedFile.save(os.path.join(app.config['UPLOAD_PATH'], fileName))
-            fileSize = ''
-            time = ''
-            newFile = Files(fileName=fileName, type=fileExtension, size=fileSize, time=time, icon='bi bi-filetype-png')
-            db.session.add(newFile)
-            db.session.commit()
+        type = ''
+        icon = ''
+        if fileExtension == '.png':
+            type = 'png'
+            icon = 'bi bi-filetype-png'
+        elif fileExtension == '.jpg':
+            type = 'jpg'
+            icon = 'bi bi-filetype-jpg'
+        elif fileExtension == '.jpeg':
+            type = 'jpg'
+            icon = 'bi bi-filetype-jpg'
+        elif fileExtension == '.txt':
+            type = 'txt'
+            icon = 'bi bi-filetype-txt'
+        uploadedFile.save(os.path.join(app.config['UPLOAD_PATH'], fileName))
+        size = round(os.stat(os.path.join(app.config['UPLOAD_PATH'], fileName)).st_size / (1024 * 1024), 2)
+        time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        newFile = Files(fileName=fileName, size=size, type=type, icon=icon, time=time)
+        db.session.add(newFile)
+        db.session.commit()
         flash('Plik przesłany poprawnie', 'success')
         return redirect(url_for('dashboard'))
+
+@app.route('/rename-file', methods=['GET', 'POST'])
+@login_required
+def renameFile():
+    return redirect(url_for('dashboard'))
+
+@app.route('/delete-file', methods=['GET', 'POST'])
+@login_required
+def deleteFile():
+    return redirect(url_for('dashboard'))
+
+@app.route('/create-folder', methods=['GET', 'POST'])
+@login_required
+def createFolder():
+    folderName = request.form['folderName']
+    if folderName != '':
+        time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        os.mkdir(os.path.join(app.config['UPLOAD_PATH'], folderName))
+        newFolder = Folders(folderName=folderName, type='folder', icon='bi bi-folder', time=time)
+        db.session.add(newFolder)
+        db.session.commit()
+        flash('Folder utworzony poprawnie', 'success')
+        return redirect(url_for('dashboard'))
+
+@app.route('/rename-folder<name>', methods=['GET', 'POST'])
+@login_required
+def renameFolder(name):
+    renameFolder = RenameFolder()
+    folderName = renameFolder.folderName.data
+    if folderName != '':
+        print(name)
+        print(folderName)
+        os.rename(os.path.join(app.config['UPLOAD_PATH'], name), os.path.join(app.config['UPLOAD_PATH'], folderName))
+        folder = Folders.query.filter_by(folderName=name).first()
+        folder.folderName = folderName
+        db.session.commit()
+        flash('Folder zmieniony poprawnie', 'success')
+        print(folder)
+        return
+    redirect(url_for('dashboard'))
+
+
+@app.route('/delete-folder<name>', methods=['GET', 'POST'])
+@login_required
+def deleteFolder(name):
+    os.rmdir(os.path.join(app.config['UPLOAD_PATH'], name))
+    folder = Folders.query.filter_by(folderName=name).first()
+    db.session.delete(folder)
+    db.session.commit()
+    flash('Folder usunięty poprawnie', 'success')
+    return redirect(url_for('dashboard'))
+
 
 if __name__ == '__main__':
     with app.app_context():
