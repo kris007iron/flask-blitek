@@ -220,7 +220,7 @@
 
     <!-- rename-folder-modal -->
     {% for folder in folders %}
-    <div class="modal fade" id="renameFolder{{ folder.folderName }}" tabindex="-1" aria-labelledby="renameFolderLabel" aria-hidden="true">
+    <div class="modal fade" id="renameFolder{{ folder.id }}" tabindex="-1" aria-labelledby="renameFolderLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -228,7 +228,7 @@
                         <i class="bi bi-folder-plus pe-2 fs-5"></i>Zmiana nazwy folderu
                     </p>
                 </div>
-                <form method="post" action="{{ url_for('renameFolder', name=folder.folderName) }}">
+                <form method="post" action="{{ url_for('renameFolder', id=folder.id) }}">
                     <div class="modal-body">
                         <div class="input-group">
                             {{ renameFolder.hidden_tag() }}
@@ -246,7 +246,7 @@
     {% endfor %}
     <!-- delete-folder-modal -->
     {% for folder in folders %}
-    <div class="modal fade" id="deleteFolder{{ folder.folderName }}" tabindex="-1" aria-labelledby="deleteFolderLabel" aria-hidden="true">
+    <div class="modal fade" id="deleteFolder{{ folder.id }}" tabindex="-1" aria-labelledby="deleteFolderLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -259,7 +259,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Anuluj</button>
-                    <form action="{{ url_for('deleteFolder', name=folder.folderName) }}" method="post">
+                    <form action="{{ url_for('deleteFolder', id=folder.id) }}" method="post">
                         {{ deleteFolder.hidden_tag() }}
                         {{ deleteFolder.submit(class="btn btn-sm btn-danger", value="Tak") }}
                     </form>

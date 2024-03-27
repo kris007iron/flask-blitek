@@ -317,36 +317,35 @@ def createFolder():
     folderName = request.form['folderName']
     if folderName != '':
         time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        os.mkdir(os.path.join(app.config['UPLOAD_PATH'], folderName))
+        print(os.path.join(app.config['UPLOAD_PATH'], folderName))
+        os.mkdir(os.path.join(basedir,app.config['UPLOAD_PATH'], folderName))
         newFolder = Folders(folderName=folderName, type='folder', icon='bi bi-folder', time=time)
         db.session.add(newFolder)
         db.session.commit()
         flash('Folder utworzony poprawnie', 'success')
         return redirect(url_for('dashboard'))
 
-@app.route('/rename-folder<name>', methods=['GET', 'POST'])
+@app.route('/rename-folder<int:id>', methods=['GET', 'POST'])
 @login_required
-def renameFolder(name):
+def renameFolder(id):
     renameFolder = RenameFolder()
     folderName = renameFolder.folderName.data
     if folderName != '':
-        print(name)
         print(folderName)
-        os.rename(os.path.join(app.config['UPLOAD_PATH'], name), os.path.join(app.config['UPLOAD_PATH'], folderName))
-        folder = Folders.query.filter_by(folderName=name).first()
+        folder = Folders.query.filter_by(id=id).first()
+        os.rename(os.path.join(basedir,app.config['UPLOAD_PATH'], folder.folderName), os.path.join(basedir,app.config['UPLOAD_PATH'], folderName))
         folder.folderName = folderName
         db.session.commit()
         flash('Folder zmieniony poprawnie', 'success')
         print(folder)
-        return
-    redirect(url_for('dashboard'))
+    return redirect(url_for('dashboard'))
 
 
-@app.route('/delete-folder<name>', methods=['GET', 'POST'])
+@app.route('/delete-folder<int:id>', methods=['GET', 'POST'])
 @login_required
-def deleteFolder(name):
-    os.rmdir(os.path.join(app.config['UPLOAD_PATH'], name))
-    folder = Folders.query.filter_by(folderName=name).first()
+def deleteFolder(id):
+    folder = Folders.query.filter_by(id=id).first()
+    os.rmdir(os.path.join(basedir,app.config['UPLOAD_PATH'], folder.folderName))
     db.session.delete(folder)
     db.session.commit()
     flash('Folder usunięty poprawnie', 'success')
