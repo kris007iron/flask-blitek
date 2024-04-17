@@ -218,21 +218,22 @@
         </div>
     </div>
 
-    <!-- rename-folder-modal -->
+
+ <!-- renameFolderModal -->
     {% for folder in folders %}
-    <div class="modal fade" id="renameFolder{{ folder.id }}" tabindex="-1" aria-labelledby="renameFolderLabel" aria-hidden="true">
+    <div class="modal fade" id="renameFolder{{folder.folderName}}" tabindex="-1" aria-labelledby="createFolderLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <p class="modal-title" id="renameFolderModal">
-                        <i class="bi bi-folder-plus pe-2 fs-5"></i>Zmiana nazwy folderu
+                    <p class="modal-title" id="renameFolder{{ folder.folderName }}Modal">
+                        <i class="bi bi-folder-plus pe-2 fs-5"></i>Zmień nazwę dla folderu {{folder.folderName}}
                     </p>
                 </div>
                 <form method="post" action="{{ url_for('renameFolder', id=folder.id) }}">
                     <div class="modal-body">
                         <div class="input-group">
                             {{ renameFolder.hidden_tag() }}
-                            {{ renameFolder.folderName(class="form-control rounded-1", value=folder.folderName) }}
+                            {{ renameFolder.folderName(class="form-control rounded-1") }}
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -244,28 +245,114 @@
         </div>
     </div>
     {% endfor %}
-    <!-- delete-folder-modal -->
+
+ <!-- renameFolderModal -->
     {% for folder in folders %}
-    <div class="modal fade" id="deleteFolder{{ folder.id }}" tabindex="-1" aria-labelledby="deleteFolderLabel" aria-hidden="true">
+    <div class="modal fade" id="delFolder{{folder.folderName}}" tabindex="-1" aria-labelledby="createFolderLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <p class="modal-title" id="deleteFolderModal">
-                        <i class="bi bi-folder-dash pe-2 fs-5"></i>Usuń folder
+                    <p class="modal-title" id="delFolder{{ folder.folderName }}Modal">
+                        <i class="bi bi-folder-plus pe-2 fs-5"></i>
                     </p>
                 </div>
-                <div class="modal-body">
-                    Czy na pewno chcesz usunąć folder {{ folder.folderName }}?
+                <form method="post" action="{{ url_for('deleteFolder', id=folder.id) }}">
+                    <div class="modal-body">
+                        Czy chcesz usunąć folder {{folder.folderName}}?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                        {{ delFolder.submit(class="btn btn-sm btn-outline-secondary") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+ <!-- changePass -->
+    <div class="modal fade" id="changePass" tabindex="-1" aria-labelledby="createFolderLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="modal-title" id="changePassModal">
+                        <i class="bi bi-person pe-2 fs-5"></i>
+                    </p>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Anuluj</button>
-                    <form action="{{ url_for('deleteFolder', id=folder.id) }}" method="post">
-                        {{ deleteFolder.hidden_tag() }}
-                        {{ deleteFolder.submit(class="btn btn-sm btn-danger", value="Tak") }}
+                <form method="post" action="{{ url_for('changePass', id=current_user.id) }}">
+                    <div class="modal-body">
+                     <form method="post" action="">
+                        {{ editPass.hidden_tag() }}
+                        <div class="input-group flex-nowrap py-1">
+                            <span class="input-group-text text-secondary">@</span>
+                            {{ editPass.userMail(class="form-control", value=current_user.userMail) }}
+                        </div>
+                        <div class="input-group flex-nowrap py-1">
+                            <span class="input-group-text"><i class="bi bi-key text-secondary"></i></span>
+                            {{ editPass.userPass(class="form-control") }}
+                        </div>
+                        <div class="input-group flex-nowrap py-1">
+                            <span class="input-group-text"><i class="bi bi-key text-secondary"></i></span>
+                            {{ editPass.newUserPass(class="form-control") }}
+                        </div>
+                        <div class="py-5 d-grid">
+                            {{ editPass.submit(class="btn btn-outline-secondary rounded-1") }}
+                        </div>
                     </form>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+ <!-- renameFileModal -->
+    {% for file in files %}
+    <div class="modal fade" id="renameFile{{file.id}}" tabindex="-1" aria-labelledby="createFolderLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="modal-title" id="renameFile{{ file.id }}Modal">
+                        <i class="bi bi-folder-plus pe-2 fs-5"></i>Zmień nazwę dla pliku {{file.fileName}}
+                    </p>
                 </div>
+                <form method="post" action="{{ url_for('renameFile', id=file.id) }}">
+                    <div class="modal-body">
+                        <div class="input-group">
+                            {{ renameFolder.hidden_tag() }}
+                            {{ renameFolder.folderName(class="form-control rounded-1") }}
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                        {{ renameFolder.submit(class="btn btn-sm btn-outline-secondary") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+ <!-- delFileModal -->
+    {% for file in files %}
+    <div class="modal fade" id="delFile{{file.id}}" tabindex="-1" aria-labelledby="createFolderLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="modal-title" id="delFile{{ file.id }}Modal">
+                        <i class="bi bi-folder-plus pe-2 fs-5"></i>
+                    </p>
+                </div>
+                <form method="post" action="{{ url_for('deleteFile', id=file.id) }}">
+                    <div class="modal-body">
+                        Czy chcesz usunąć plik {{file.fileName}}?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                        {{ delFolder.submit(class="btn btn-sm btn-outline-secondary") }}
+                    </div>
+                </form>
             </div>
         </div>
     </div>
     {% endfor %}
 {% endblock %}
+
+

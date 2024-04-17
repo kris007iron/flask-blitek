@@ -17,7 +17,7 @@ app = Flask(__name__)
 bootstrap = Bootstrap(app)
 app.config['SECRET_KEY'] = 'lkjh6789&^&*(OKJHG&*(*&YHJ'
 bcrypt = Bcrypt(app)
-app.config['UPLOAD_PATH'] = 'uploads'
+app.config['UPLOAD_PATH'] = 'upload'
 app.config['UPLOAD_EXTENSIONS'] = ['.txt', '.png', '.jpg', '.jpeg']
 app.config['MAX_CONTENT_LENGHT'] = 16 * 1024 * 1024 # 16MB
 
@@ -123,17 +123,16 @@ class UploadFiles(FlaskForm):
     fileName = FileField('Plik', validators=[FileAllowed([app.config['UPLOAD_EXTENSIONS']])], render_kw={'placeholder': '.txt, .png, .jpg, .jpeg'})
     submit = SubmitField('Prześlij')
 
-class RenameFolder(FlaskForm):
-    """formularz zmiany nazwy folderu"""
-    folderName = StringField('Nowa nazwa folderu', validators=[DataRequired()], render_kw={'placeholder': 'Nowa nazwa folderu'})
+class renameFolders(FlaskForm):
+    """formularz przesyłania plików"""
+    folderName = StringField('Nazwa folderu', validators=[DataRequired()], render_kw={'placeholder': 'Nazwa folderu'})
     submit = SubmitField('Zapisz')
-
-class DeleteFolder(FlaskForm):
-    """formularz usuwania folderu"""
+class delFolders(FlaskForm):
+    """formularz przesyłania plików"""
     submit = SubmitField('Usuń')
 
-
 # główna aplikacja
+
 @app.route('/')
 def index():
     return render_template('index.html', title='Home', headline='Zarządzanie użytkownikami')
@@ -196,12 +195,13 @@ def dashboard():
     editUserPass = ChangePass()
     search = Search()
     createFolder = CreateFolders()
+    renameFolder = renameFolders()
+    delFolder = delFolders()
     uploadFile = UploadFiles()
     folders = Folders.query.all()
     files = Files.query.all()
-    renameFolder = RenameFolder()
-    deleteFolder = DeleteFolder()
-    return render_template('dashboard.html', title='Dashboard', users=users, addUser=addUser, editUser=editUser, editUserPass=editUserPass, search=search, createFolder=createFolder, uploadFile=uploadFile, files=files, folders=folders, current_user=current_user, datetime=datetime, os=os, renameFolder=renameFolder, deleteFolder=deleteFolder)
+    editPass = Password()
+    return render_template('dashboard.html', editPass=editPass,delFolder=delFolder, renameFolder=renameFolder, title='Dashboard', users=users, addUser=addUser, editUser=editUser, editUserPass=editUserPass, search=search, createFolder=createFolder, uploadFile=uploadFile, files=files, folders=folders)
 
 @app.route('/add-user', methods=['GET', 'POST'])
 @login_required
@@ -248,8 +248,8 @@ def deleteUser():
 @login_required
 def editUserPass(id):
     editUserPass = ChangePass()
-    user = Users.query.get_or_404(id)
-    if editUserPass.validate_on_submit():
+    user = Users.query.filter_by(id=id).first()
+    if editUserPass.validate_on_submit() and user:
         user.userPass = bcrypt.generate_password_hash(editUserPass.userPass.data)
         db.session.commit()
         flash('Hasło zmienione poprawnie', 'success')
@@ -259,15 +259,20 @@ def editUserPass(id):
 @login_required
 def changePass():
     changePassForm = Password()
-    if changePassForm.validate_on_submit():
-        user = Users.query.filter_by(userMail=changePassForm.userMail.data).first()
-        if user:
+    user = Users.query.filter_by(userMail=changePassForm.userMail.data).first()
+    if changePassForm.validate_on_submit() and user:
             if bcrypt.check_password_hash(user.userPass, changePassForm.userPass.data):
                 user.userPass = bcrypt.generate_password_hash(changePassForm.newUserPass.data)
+                flash('Hasło zostało zmienione pomyślnie', 'success')
                 db.session.commit()
-                flash('Hasło zostało zmienione', 'success')
                 return redirect(url_for('dashboard'))
-    return render_template('change-pass.html', title='Zmiana hasła', changePassForm=changePassForm)
+            else:
+                flash('Błąd przy zapisie hasła', 'danger')
+    else:
+        flash('Błąd przy zapisie hasła', 'danger')
+    return redirect(url_for('dashboard'))
+
+
 
 @app.route('/upload-file', methods=['GET', 'POST'])
 @login_required
@@ -301,15 +306,43 @@ def uploadFile():
         flash('Plik przesłany poprawnie', 'success')
         return redirect(url_for('dashboard'))
 
-@app.route('/rename-file', methods=['GET', 'POST'])
+@app.route('/rename-file<int:id>', methods=['GET', 'POST'])
 @login_required
-def renameFile():
+def renameFile(id):
+    newFileName = request.form['folderName']
+    print(id)
+    print(newFileName)
+    if newFileName != "":
+        fileToRename = Files.query.filter_by(id=id).first()
+        arr = newFileName.split(".")
+        print(arr)
+        if len(arr) == 2:
+            if not arr[1] == fileToRename.type:
+                newFileName = arr[0] +  f".{fileToRename.type}"
+                flash(f'Pomyślnie zmieniono nazwę pliku {fileToRename.fileName} na {newFileName}', 'success')
+        else:
+            newFileName += arr[0] +  f".{fileToRename.type}"
+            flash(f'Zmieniono nazwę pliku {fileToRename.fileName} na {newFileName}', 'success')
+        print(newFileName)
+        # if not newFileName.split(".")[1]
+        os.rename(os.path.join(app.config['UPLOAD_PATH'], fileToRename.fileName), os.path.join(app.config['UPLOAD_PATH'], newFileName))
+        fileToRename.fileName = newFileName
+        db.session.commit()
+
     return redirect(url_for('dashboard'))
 
-@app.route('/delete-file', methods=['GET', 'POST'])
+
+
+@app.route('/delete-file<int:id>', methods=['GET', 'POST'])
 @login_required
-def deleteFile():
+def deleteFile(id):
+    fileToDelete = Files.query.filter_by(id=id).first()
+    os.remove(os.path.join(app.config['UPLOAD_PATH'], fileToDelete.fileName))
+    Files.query.filter_by(id=id).delete()
+    db.session.commit()
+    flash(f'Pomyślnie usunięto plik {fileToDelete.fileName}', 'success')
     return redirect(url_for('dashboard'))
+
 
 @app.route('/create-folder', methods=['GET', 'POST'])
 @login_required
@@ -317,8 +350,7 @@ def createFolder():
     folderName = request.form['folderName']
     if folderName != '':
         time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        print(os.path.join(app.config['UPLOAD_PATH'], folderName))
-        os.mkdir(os.path.join(basedir,app.config['UPLOAD_PATH'], folderName))
+        os.mkdir(os.path.join(app.config['UPLOAD_PATH'], folderName))
         newFolder = Folders(folderName=folderName, type='folder', icon='bi bi-folder', time=time)
         db.session.add(newFolder)
         db.session.commit()
@@ -328,29 +360,37 @@ def createFolder():
 @app.route('/rename-folder<int:id>', methods=['GET', 'POST'])
 @login_required
 def renameFolder(id):
-    renameFolder = RenameFolder()
-    folderName = renameFolder.folderName.data
-    if folderName != '':
-        print(folderName)
+    newFolderName = request.form['folderName']
+    if newFolderName != '':
+        print(id)
+        print(newFolderName)
         folder = Folders.query.filter_by(id=id).first()
-        os.rename(os.path.join(basedir,app.config['UPLOAD_PATH'], folder.folderName), os.path.join(basedir,app.config['UPLOAD_PATH'], folderName))
-        folder.folderName = folderName
+        if folder:
+            os.rename(os.path.join(app.config['UPLOAD_PATH'], folder.folderName), os.path.join(app.config['UPLOAD_PATH'], newFolderName))
+            folder.folderName = newFolderName
         db.session.commit()
-        flash('Folder zmieniony poprawnie', 'success')
+        flash(f'Pomyślnie zmieniono nazwę foldery {id} na {newFolderName}', 'success')
         print(folder)
-    return redirect(url_for('dashboard'))
 
+    # if newFolderName != '':
+    #
+    #     db.session.add(newFolder)
+    #     db.session.commit()
+    #     flash('Folder utworzony poprawnie', 'success')
+    #     return redirect(url_for('dashboard'))
+    #
+    # db.session.commit()
+    return redirect(url_for('dashboard'))
 
 @app.route('/delete-folder<int:id>', methods=['GET', 'POST'])
 @login_required
 def deleteFolder(id):
-    folder = Folders.query.filter_by(id=id).first()
-    os.rmdir(os.path.join(basedir,app.config['UPLOAD_PATH'], folder.folderName))
-    db.session.delete(folder)
+    folderToDelete = Folders.query.filter_by(id=id).first()
+    os.rmdir(os.path.join(app.config['UPLOAD_PATH'], folderToDelete.folderName))
+    Folders.query.filter_by(id=id).delete()
     db.session.commit()
-    flash('Folder usunięty poprawnie', 'success')
+    flash(f'Pomyślnie usunięto folder {folderToDelete.folderName}', 'success')
     return redirect(url_for('dashboard'))
-
 
 if __name__ == '__main__':
     with app.app_context():
